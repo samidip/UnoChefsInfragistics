@@ -408,3 +408,19 @@ solution-config.props
 .DS_Store
 
 crosstargeting_override.props
+## Executables and platform packages
+*.exe
+*.dll
+*.so
+*.dylib
+*.app/
+*.apk
+*.aab
+*.ipa
+*.dmg
+*.pkg
+*.msi
+*.msixbundle
+*.nupkg
+*.snupkg
+*.dSYM/
