@@ -1,0 +1,10 @@
+{
+  "background_color": "#ffffff",
+  "description": "UnoChefsInfragistics",
+  "display": "standalone",
+  "name": "UnoChefsInfragistics",
+  "short_name": "UnoChefsInfragistics",
+  "start_url": "/index.html",
+  "theme_color": "#ffffff",
+  "scope": "/"
+}

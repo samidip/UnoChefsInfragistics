@@ -1,0 +1,94 @@
+﻿<Page xmlns:uen="using:Uno.Extensions.Navigation.UI"
+	  xmlns:uer="using:Uno.Extensions.Reactive.UI"
+	  xmlns:utu="using:Uno.Toolkit.UI"
+	  xmlns:utum="using:Uno.Toolkit.UI.Material"
+	  xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+	  xmlns:ut="using:Uno.Themes"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	  xmlns:local="using:Chefs.Views"
+	  xmlns:igm="using:Infragistics.Controls.Maps"
+	  xmlns:igc="using:Infragistics.Controls.Charts"
+	  x:Class="Chefs.Views.MapPage"
+	  xmlns:not_mobile="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  mc:Ignorable="d"
+	  Background="{ThemeResource BackgroundBrush}"
+	  utu:StatusBar.Foreground="Dark"
+	  utu:StatusBar.Background="{ThemeResource SurfaceInverseBrush}"
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<utu:AutoLayout>
+		<utu:NavigationBar Content="Near me" />
+		<Grid utu:AutoLayout.PrimaryAlignment="Stretch">
+			<igm:XamGeographicMap x:Name="GeoMap"
+								  Zoomable="True">
+				<igm:XamGeographicMap.Series>
+					<!-- Contributor bubbles sized by recipe count -->
+					<igm:GeographicProportionalSymbolSeries x:Name="ContributorSeries"
+															LatitudeMemberPath="Lat"
+															LongitudeMemberPath="Lng"
+															RadiusMemberPath="Recipes"
+															MarkerType="Circle"
+															MarkerBrush="{ThemeResource PrimaryBrush}"
+															MarkerOutline="{ThemeResource OnPrimaryBrush}"
+															MarkerThickness="2">
+						<igm:GeographicProportionalSymbolSeries.RadiusScale>
+							<igc:SizeScale MinimumValue="24"
+										   MaximumValue="48" />
+						</igm:GeographicProportionalSymbolSeries.RadiusScale>
+					</igm:GeographicProportionalSymbolSeries>
+					<igm:GeographicProportionalSymbolSeries x:Name="MyLocationSeries"
+															LatitudeMemberPath="Lat"
+															LongitudeMemberPath="Lng"
+															RadiusMemberPath="Recipes"
+															MarkerType="Circle"
+															MarkerBrush="{ThemeResource SurfaceInverseBrush}"
+															MarkerOutline="{ThemeResource OnPrimaryBrush}"
+															MarkerThickness="3">
+						<igm:GeographicProportionalSymbolSeries.RadiusScale>
+							<igc:SizeScale MinimumValue="18"
+										   MaximumValue="18" />
+						</igm:GeographicProportionalSymbolSeries.RadiusScale>
+					</igm:GeographicProportionalSymbolSeries>
+				</igm:XamGeographicMap.Series>
+			</igm:XamGeographicMap>
+
+			<!-- Callout shown when a pin is tapped -->
+			<Canvas IsHitTestVisible="False">
+				<Border x:Name="Callout"
+						Visibility="Collapsed"
+						MaxWidth="160"
+						Padding="12,8"
+						CornerRadius="8"
+						Background="{ThemeResource SurfaceBrush}"
+						BorderBrush="{ThemeResource OutlineVariantBrush}"
+						BorderThickness="1">
+					<StackPanel>
+						<TextBlock x:Name="CalloutTitle"
+								   Style="{StaticResource TitleSmall}"
+								   Foreground="{ThemeResource OnSurfaceBrush}" />
+						<TextBlock x:Name="CalloutSubtitle"
+								   Style="{StaticResource BodySmall}"
+								   Foreground="{ThemeResource OnSurfaceVariantBrush}" />
+					</StackPanel>
+				</Border>
+			</Canvas>
+
+			<StackPanel Margin="36"
+						Spacing="8"
+						HorizontalAlignment="Left"
+						VerticalAlignment="Top">
+				<Button Content="+"
+						Width="40"
+						Height="40"
+						Padding="0"
+						Click="OnZoomInClick" />
+				<Button Content="−"
+						Width="40"
+						Height="40"
+						Padding="0"
+						Click="OnZoomOutClick" />
+			</StackPanel>
+		</Grid>
+	</utu:AutoLayout>
+</Page>

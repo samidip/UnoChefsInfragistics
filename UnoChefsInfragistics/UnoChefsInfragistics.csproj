@@ -1,0 +1,222 @@
+﻿<Project Sdk="Uno.Sdk">
+	<PropertyGroup>
+		<!-- Building with dotnet build -f net9.0-platform will still cause restore to happen for all TargetFrameworks -->
+		<!-- which will force us to install all workloads even if not needed -->
+		<!-- To prevent that, we will pass TargetFrameworkOverride as a global property (i.e, dotnet build -p:TargetFrameworkOverride=net9.0-platform) -->
+		<!-- That way, we set TargetFrameworks property to only the needed TargetFramework -->
+		<TargetFrameworks Condition="'$(TargetFrameworkOverride)'!=''">$(TargetFrameworkOverride)</TargetFrameworks>
+		<TargetFrameworks Condition="'$(TargetFrameworkOverride)'==''">
+			net10.0-android;
+			net10.0-ios;
+			net10.0-windows10.0.19041;
+			net10.0-desktop;
+			net10.0-browserwasm;
+		</TargetFrameworks>
+		<OutputType>Exe</OutputType>
+		<UnoSingleProject>true</UnoSingleProject>
+		<!-- Display name -->
+		<ApplicationTitle>UnoChefsInfragistics</ApplicationTitle>
+		<RootNamespace>Chefs</RootNamespace>
+		
+		<!-- App Identifier -->
+		<ApplicationId>uno.platform.unochefsinfragistics</ApplicationId>
+
+		<ApplicationId Condition="'$(IsCanaryBranch)'=='true'">$(ApplicationId)-canary</ApplicationId>
+
+		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+		<ApplicationVersion>1</ApplicationVersion>
+		<UseMocks Condition="'$(UseMocks)'==''">true</UseMocks>
+		<!--
+			If you encounter this error message:
+
+			error NETSDK1148: A referenced assembly was compiled using a newer version of Microsoft.Windows.SDK.NET.dll.
+			Please update to a newer .NET SDK in order to reference this assembly.
+
+			This means that the two packages below must be aligned with the "build" version number of
+			the "Microsoft.Windows.SDK.BuildTools" package above, and the "revision" version number
+			must be the highest found in https://www.nuget.org/packages/Microsoft.Windows.SDK.NET.Ref.
+		-->
+		<!-- <WindowsSdkPackageVersion>10.0.22621.28</WindowsSdkPackageVersion> -->
+		<!--
+			UnoFeatures let's you quickly add and manage implicit package references based on the features you want to use.
+			https://aka.platform.uno/singleproject-features
+		-->
+
+		<UnoFeatures>
+			Material;
+			Hosting;
+			Toolkit;
+			Logging;
+			MVUX;
+			Configuration;
+			HttpKiota;
+			Serialization;
+			Localization;
+			Navigation;
+			MediaElement;
+			Skia;
+			ThemeService;
+			Authentication;
+			SkiaRenderer;
+		</UnoFeatures>
+
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Infragistics.Uno.Core.Trial" />
+		<PackageReference Include="Infragistics.Uno.Charts.Trial" />
+		<PackageReference Include="Infragistics.Uno.Gauges.Trial" />
+		<PackageReference Include="Infragistics.Uno.Maps.Trial" />
+		<PackageReference Include="Infragistics.Uno.Inputs.Trial" />
+		<PackageReference Include="Infragistics.Uno.Layouts.Trial" />
+		<PackageReference Include="Infragistics.Uno.DataGrid.Trial" />
+	</ItemGroup>
+
+	<PropertyGroup Condition="'$(UseMocks)'=='true'">
+		<DefineConstants>$(DefineConstants);USE_MOCKS</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)'=='Debug' or '$(IsUiAutomationMappingEnabled)'=='True'">
+		<IsUiAutomationMappingEnabled>True</IsUiAutomationMappingEnabled>
+		<DefineConstants>$(DefineConstants);USE_UITESTS</DefineConstants>
+		<EmbedAssembliesIntoApk Condition="$(IsAndroid)">true</EmbedAssembliesIntoApk>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<UnoSplashScreenColor>#313033</UnoSplashScreenColor>
+		<UnoIconForegroundScale>0.5</UnoIconForegroundScale>
+		<UnoSplashScreenBaseSize>350,300</UnoSplashScreenBaseSize>
+		<UnoIconForegroundFile Condition="'$(IsCanaryBranch)'=='true'">Assets/Icons/icon_foreground_canary.svg</UnoIconForegroundFile>
+		<UnoSplashScreenFile Condition="'$(IsCanaryBranch)'=='true'">Assets/Splash/splash_screen_canary.svg</UnoSplashScreenFile>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="$(IsBrowserWasm) AND '$(Configuration)' == 'Release'">
+		<WasmShellMonoRuntimeExecutionMode>InterpreterAndAOT</WasmShellMonoRuntimeExecutionMode>
+		<WasmShellEmccLinkOptimization>false</WasmShellEmccLinkOptimization>
+		<WasmShellEnableEmccProfiling>true</WasmShellEnableEmccProfiling>
+		<UnoXamlResourcesTrimming>true</UnoXamlResourcesTrimming>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Content Include="Assets\**\*.png" />
+	</ItemGroup>
+
+	<Target Name="AdjustCalabash" BeforeTargets="BeforeBuild">
+		<!-- Needs to be run as a target, as RuntimeIdentifier is set after the csproj is parsed -->
+		<PropertyGroup Condition="!$(RuntimeIdentifier.Contains('arm64'))">
+			<DefineConstants>$(DefineConstants);HAS_TESTCLOUD_AGENT</DefineConstants>
+		</PropertyGroup>
+	</Target>
+
+	<Choose>
+		<When Condition="'$(IsCanaryBranch)'=='true'">
+			<ItemGroup>
+				<UnoImage Include="Assets\Icons\chefslogo_canary.svg" Link="Assets\Icons\chefslogosignature.svg" />
+				<UnoImage Include="Assets\Icons\chefslogo_dark_canary.svg" Link="Assets\Icons\chefslogosignature_dark.svg" />
+			</ItemGroup>
+		</When>
+		<Otherwise>
+			<ItemGroup>
+				<UnoImage Include="Assets\Icons\chefslogo.svg" Link="Assets\Icons\chefslogosignature.svg" />
+				<UnoImage Include="Assets\Icons\chefslogo_dark.svg" Link="Assets\Icons\chefslogosignature_dark.svg" />
+			</ItemGroup>
+		</Otherwise>
+	</Choose>
+
+	<Choose>
+		<When Condition="'$(IsAndroid)' == 'true' or '$(IsAppleUIKit)' == 'true'">
+			<ItemGroup>
+				<IncludeXamlNamespaces Include="mobile" />
+				<ExcludeXamlNamespaces Include="not_mobile" />
+			</ItemGroup>
+		</When>
+		<Otherwise>
+			<ItemGroup>
+				<IncludeXamlNamespaces Include="not_mobile" />
+				<ExcludeXamlNamespaces Include="mobile" />
+			</ItemGroup>
+		</Otherwise>
+	</Choose>
+
+	<Choose>
+		<When Condition="$(IsIOS)">
+			<PropertyGroup Condition="'$(Configuration)'=='Release'">
+				<CodesignKey>iPhone Distribution</CodesignKey>
+
+				<!-- BEGIN Workaround - AOT fails currently uno-private #648, not fixed in 9.0.200 -->
+				<MtouchUseLlvm>false</MtouchUseLlvm>
+				<!-- END Workaround -->
+			</PropertyGroup>
+			<ItemGroup Condition="'$(IsUiAutomationMappingEnabled)'=='True' and !$(RuntimeIdentifier.Contains('arm64'))">
+				<PackageReference Include="Xamarin.TestCloud.Agent" />
+			</ItemGroup>
+		</When>
+		<When Condition="$(IsBrowserWasm)">
+			<PropertyGroup Condition="'$(Configuration)'=='Release' and '$(WasmShellMonoRuntimeExecutionMode)'=='InterpreterAndAOT'">
+				<WasmAotFileName>aot-skia.profile</WasmAotFileName>
+			</PropertyGroup>
+
+			<PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+				<WasmShellMonoRuntimeExecutionMode>InterpreterAndAOT</WasmShellMonoRuntimeExecutionMode>
+				<WasmShellEmccLinkOptimization>false</WasmShellEmccLinkOptimization>
+				<WasmShellEnableEmccProfiling>true</WasmShellEnableEmccProfiling>
+
+				<!--
+				Uncomment this block to generate a profile
+				<WasmShellGenerateAOTProfile>true</WasmShellGenerateAOTProfile>
+				<WasmShellILLinkerEnabled>false</WasmShellILLinkerEnabled>
+				<UnoXamlResourcesTrimming>false</UnoXamlResourcesTrimming>
+				<WasmShellEnableJiterpreter>false</WasmShellEnableJiterpreter>
+				-->
+			</PropertyGroup>
+
+			<ItemGroup>
+				<EmbeddedResource Include="Platforms\WebAssembly\WasmCSS\**\*.css" />
+				<EmbeddedResource Include="Platforms\WebAssembly\WasmScripts\**\*.js" />
+				<UpToDateCheckInput Include="Platforms\WebAssembly\WasmCSS\**\*" />
+				<UpToDateCheckInput Include="Platforms\WebAssembly\WasmScripts\**\*" />
+			</ItemGroup>
+
+			<ItemGroup>
+				<None Remove="Platforms\WebAssembly\WasmScripts\TestRunner.js" />
+			</ItemGroup>
+
+			<ItemGroup>
+				<UpToDateCheckInput Remove="Platforms\WebAssembly\WasmScripts\TestRunner.js" />
+			</ItemGroup>
+		</When>
+	</Choose>
+
+	<!-- https://github.com/dotnet/runtime/issues/109289 -->
+	<Target Name="Issue109289_Workaround" AfterTargets="_BrowserWasmWriteRspForLinking" Condition=" $(NETCoreSdkVersion.Contains('9.0.')) ">
+		<ItemGroup>
+			<_WasmLinkStepArgs Remove="@(_EmccLinkStepArgs)" />
+			<_EmccLinkStepArgs Remove="&quot;%(_WasmNativeFileForLinking.Identity)&quot;" />
+			<_WasmLinkDependencies Remove="@(_WasmNativeFileForLinking)" />
+
+			<_SkiaSharpToReorder Include="@(_WasmNativeFileForLinking)" Condition="$([System.String]::Copy('%(FullPath)').Contains('SkiaSharp'))" />
+			<_WasmNativeFileForLinking Remove="@(_SkiaSharpToReorder)" />
+			<_WasmNativeFileForLinking Include="@(_SkiaSharpToReorder)" />
+
+			<_EmccLinkStepArgs Include="&quot;%(_WasmNativeFileForLinking.Identity)&quot;" />
+			<_WasmLinkDependencies Include="@(_WasmNativeFileForLinking)" />
+			<_WasmLinkStepArgs Include="@(_EmccLinkStepArgs)" />
+		</ItemGroup>
+	</Target>
+
+	<Target Name="AdjustStrip" BeforeTargets="_WasmCommonPrepareForWasmBuildNative">
+		<PropertyGroup>
+			<!-- Enable debug symbols for release mode to profiling -->
+			<WasmNativeStrip>false</WasmNativeStrip>
+			<WasmNativeDebugSymbols>true</WasmNativeDebugSymbols>
+		</PropertyGroup>
+	</Target>
+
+	<ItemGroup>
+		<Content Include="..\AppData\*.json" LinkBase="AppData">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+</Project>

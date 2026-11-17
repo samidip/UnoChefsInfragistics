@@ -1,0 +1,24 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include="coverlet.collector" Version="3.2.0" />
+    <PackageVersion Include="Infragistics.Uno.Core.Trial" Version="26.1.1000-alpha.24" />
+    <PackageVersion Include="Infragistics.Uno.Charts.Trial" Version="26.1.1000-alpha.24" />
+    <PackageVersion Include="Infragistics.Uno.Gauges.Trial" Version="26.1.1000-alpha.24" />
+    <PackageVersion Include="Infragistics.Uno.Maps.Trial" Version="26.1.1000-alpha.24" />
+    <PackageVersion Include="Infragistics.Uno.Inputs.Trial" Version="26.1.1000-alpha.24" />
+    <PackageVersion Include="Infragistics.Uno.Layouts.Trial" Version="26.1.1000-alpha.24" />
+    <PackageVersion Include="Infragistics.Uno.DataGrid.Trial" Version="26.1.1000-alpha.24" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageVersion Include="NUnit" Version="3.13.3" />
+    <PackageVersion Include="NUnit3TestAdapter" Version="4.4.2" />
+    <PackageVersion Include="Swashbuckle.AspNetCore" Version="8.1.1" />
+    <PackageVersion Include="Xamarin.UITest" Version="4.4.2" />
+    <PackageVersion Include="System.Private.Uri" Version="4.3.2" />
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.2" />
+    <PackageVersion Include="Xamarin.TestCloud.Agent" Version="0.23.2" />
+  </ItemGroup>
+</Project>
