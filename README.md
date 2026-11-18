@@ -23,8 +23,6 @@ You don't need to restart the app to iterate on the Infragistics UI.
 | Login | `XamButton`, `XamCheckbox` | Uno `Button`, `CheckBox` |
 | Registration | `XamButton` | Uno `Button` |
 
-[INFRAGISTICS_EVALUATION.md](INFRAGISTICS_EVALUATION.md) has the details: what was swapped, what was tried and reverted, required setup, and feedback for the Infragistics team.
-
 ## Getting started
 
 ### Prerequisites
