@@ -424,3 +424,6 @@ crosstargeting_override.props
 *.nupkg
 *.snupkg
 *.dSYM/
+
+## Internal docs (not for publication)
+INFRAGISTICS_EVALUATION.md
